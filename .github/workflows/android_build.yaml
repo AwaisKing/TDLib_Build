@@ -25,7 +25,7 @@ jobs:
           java-version: '17'
 
       - name: Install dependencies (Required by TDLib build scripts)
-        run: sudo apt update && sudo apt install -yq php php-cli gperf g++ git perl make unzip wget sed yes
+        run: sudo apt update && sudo apt install -yq php php-cli gperf g++ git perl make unzip wget sed
 
       - name: Fetch Android SDK
         working-directory: tdlib_source/example/android
