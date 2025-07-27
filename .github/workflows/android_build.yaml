@@ -25,7 +25,11 @@ jobs:
           java-version: '17'
 
       - name: Install PHP (Required by TDLib build scripts)
-        run: sudo apt update && sudo apt install -y php gperf
+        run: sudo apt update && sudo apt install -yq php php-cli gperf g++ git perl make unzip wget
+
+      - name: Fetch Android SDK
+        working-directory: tdlib_source/example/android
+        run: ./fetch-sdk.sh
 
       - name: Build OpenSSL for Android
         working-directory: tdlib_source/example/android
@@ -33,16 +37,10 @@ jobs:
 
       - name: Build TDLib for Android
         working-directory: tdlib_source/example/android
-        # Using the build-tdlib.sh script
-        # Ensure you pass correct paths if the script needs them,
-        # or rely on environment variables set by setup-ndk.
-        # The 'JSONJava' argument is for building the JSON interface callable from Java.
         run: |
           ANDROID_SDK_HOME="${{ env.ANDROID_HOME }}"
           ANDROID_SDK_ROOT="${{ env.ANDROID_HOME }}"
           ANDROID_NDK_ROOT="${{ steps.setup-ndk.outputs.ndk-path }}"
-          # fetch & build TDLib
-          ./fetch-sdk.sh
           ./build-tdlib.sh
           # "$ANDROID_SDK_ROOT" "${{ steps.setup-ndk.outputs.ndk-full-version }}" "${PWD}/third_party/openssl" "" "Java"
 
