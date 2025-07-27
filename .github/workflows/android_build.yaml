@@ -24,8 +24,8 @@ jobs:
           distribution: 'temurin' # zulu, adopt
           java-version: '17'
 
-      - name: Install PHP (Required by TDLib build scripts)
-        run: sudo apt update && sudo apt install -yq php php-cli gperf g++ git perl make unzip wget sed
+      - name: Install dependencies (Required by TDLib build scripts)
+        run: sudo apt update && sudo apt install -yq php php-cli gperf g++ git perl make unzip wget sed yes
 
       - name: Fetch Android SDK
         working-directory: tdlib_source/example/android
