@@ -61,7 +61,6 @@ jobs:
           name: tdlib-ARM64-binaries
           path: |
            tdlib_source/example/android/tdlib/tdlib.zip
-           tdlib_source/example/android/build-native-Java
            tdlib_source/example/android/build-arm64-v8a-Java/lib*.so
            tdlib_source/example/android/build-arm64-v8a-Java/lib*.so.debug
           retention-days: 7
