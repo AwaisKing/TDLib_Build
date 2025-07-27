@@ -36,7 +36,7 @@ jobs:
 
       - name: List some files
         working-directory: tdlib_source/example/android
-        run: find . -maxdepth 2
+        run: find . -maxdepth 3
 
       - name: Build OpenSSL for Android (All Archs)
         working-directory: tdlib_source/example/android
@@ -44,7 +44,7 @@ jobs:
 
       - name: List some files 2
         working-directory: tdlib_source/example/android
-        run: find . -maxdepth 2
+        run: find . -maxdepth 3
 
       # # - name: Archive Compiled OpenSSL Libraries
         # # uses: actions/upload-artifact@v4
