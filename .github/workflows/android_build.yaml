@@ -34,6 +34,7 @@ jobs:
           # sdk-version: '34'
           ndk-version: 'r27d'
           add-to-path: true
+          link-to-sdk: true
           local-cache: true # Enable caching for faster subsequent runs
         env:
           ANDROID_SDK_HOME: ${{ env.ANDROID_HOME }}
@@ -55,8 +56,8 @@ jobs:
           ANDROID_SDK_ROOT="${{ env.ANDROID_HOME }}"
           ANDROID_NDK_ROOT="${{ steps.setup-ndk.outputs.ndk-path }}"
           # Explicitly pass paths, though build-tdlib.sh often auto-detects
-          ./build-tdlib.sh "$ANDROID_SDK_ROOT" "${{ steps.setup-ndk.outputs.ndk-full-version }}"
-          # "${PWD}/third_party/openssl" "" "Java"
+          ./build-tdlib.sh
+          # "$ANDROID_SDK_ROOT" "${{ steps.setup-ndk.outputs.ndk-full-version }}" "${PWD}/third_party/openssl" "" "Java"
 
       - name: Archive Compiled Libraries
         uses: actions/upload-artifact@v4
