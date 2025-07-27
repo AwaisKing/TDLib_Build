@@ -25,21 +25,7 @@ jobs:
           java-version: '17'
 
       - name: Install PHP (Required by TDLib build scripts)
-        run: sudo apt update && sudo apt upgrade -y && sudo apt install -y php
-
-      - name: Set up Android NDK and SDK
-        uses: nttld/setup-ndk@v1
-        id: setup-ndk
-        with:
-          # sdk-version: '34'
-          ndk-version: 'r27d'
-          add-to-path: true
-          link-to-sdk: true
-          local-cache: true # Enable caching for faster subsequent runs
-        env:
-          ANDROID_SDK_HOME: ${{ env.ANDROID_HOME }}
-          ANDROID_SDK_ROOT: ${{ env.ANDROID_HOME }}
-          ANDROID_NDK_HOME: ${{ steps.setup-ndk.outputs.ndk-path }}
+        run: sudo apt update && sudo apt install -y php gperf
 
       - name: Build OpenSSL for Android
         working-directory: tdlib_source/example/android
