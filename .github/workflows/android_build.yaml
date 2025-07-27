@@ -1,0 +1,66 @@
+name: Compile TDLib for Android
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch: # Allows manual triggering from GitHub Actions tab
+
+jobs:
+  build_android:
+    name: Build Android ARM64
+    runs-on: ubuntu-latest # Or your preferred runner
+
+    steps:
+      - name: Checkout TDLib Source Code
+        uses: actions/checkout@v4
+        with:
+          repository: tdlib/td # Specify the TDLib repository
+          path: tdlib_source # Checkout into a specific directory
+
+      - name: Set up Java Development Kit (JDK)
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin' # zulu, adopt
+          java-version: '17'
+
+      - name: Install PHP (Required by TDLib build scripts)
+        run: sudo apt update && sudo apt upgrade -y && sudo apt install -y php
+
+      - name: Set up Android NDK and SDK
+        uses: nttld/setup-ndk@v1
+        id: setup-ndk
+        with:
+          # sdk-version: '34'
+          ndk-version: 'r27d'
+          add-to-path: true
+          local-cache: true # Enable caching for faster subsequent runs
+        env:
+          ANDROID_SDK_HOME: ${{ env.ANDROID_HOME }}
+          ANDROID_SDK_ROOT: ${{ env.ANDROID_HOME }}
+          ANDROID_NDK_HOME: ${{ steps.setup-ndk.outputs.ndk-path }}
+
+      - name: Build OpenSSL for Android
+        working-directory: tdlib_source/example/android
+        run: ./build-openssl.sh
+
+      - name: Build TDLib for Android
+        working-directory: tdlib_source/example/android
+        # Using the build-tdlib.sh script
+        # Ensure you pass correct paths if the script needs them,
+        # or rely on environment variables set by setup-ndk.
+        # The 'JSONJava' argument is for building the JSON interface callable from Java.
+        run: |
+          ANDROID_SDK_HOME="${{ env.ANDROID_HOME }}"
+          ANDROID_SDK_ROOT="${{ env.ANDROID_HOME }}"
+          ANDROID_NDK_ROOT="${{ steps.setup-ndk.outputs.ndk-path }}"
+          # Explicitly pass paths, though build-tdlib.sh often auto-detects
+          ./build-tdlib.sh "$ANDROID_SDK_ROOT" "${{ steps.setup-ndk.outputs.ndk-full-version }}"
+          # "${PWD}/third_party/openssl" "" "Java"
+
+      - name: Archive Compiled Libraries
+        uses: actions/upload-artifact@v4
+        with:
+          name: tdlib-android-binaries
+          path: tdlib_source/example/android/tdlib
+          retention-days: 7
