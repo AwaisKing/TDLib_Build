@@ -31,24 +31,30 @@ jobs:
         working-directory: tdlib_source/example/android
         run: |
           ./fetch-sdk.sh
-          ANDROID_SDK_HOME="${{ env.ANDROID_HOME }}"
-          ANDROID_SDK_ROOT="${{ env.ANDROID_HOME }}"
-          ANDROID_NDK_ROOT="${{ steps.setup-ndk.outputs.ndk-path }}"
+          ANDROID_SDK_HOME="$ANDROID_SDK_ROOT"
+          ANDROID_NDK_ROOT="$ANDROID_SDK_ROOT/ndk/$ANDROID_NDK_VERSION"
 
       - name: Build OpenSSL for Android (All Archs)
         working-directory: tdlib_source/example/android
         run: ./build-openssl.sh
+
+      # - name: Archive Compiled OpenSSL Libraries
+        # uses: actions/upload-artifact@v4
+        # with:
+          # name: OpenSSL-android-binaries
+          # path: tdlib_source/example/android/tdlib
+          # retention-days: 7
 
       - name: Build TDLib for Android (ARM64)
         working-directory: tdlib_source/example/android
         run: |
           sed -i.bak 's/\(for ABI in \).* ;/\1arm64-v8a ;/g' build-tdlib.sh
           ./build-tdlib.sh
-          # "$ANDROID_SDK_ROOT" "${{ steps.setup-ndk.outputs.ndk-full-version }}" "${PWD}/third_party/openssl" "" "Java"
+          # "$ANDROID_SDK_ROOT" "${{ steps.setup-ndk.outputs.ndk-full-version }}" "${PWD}/third-party/openssl" "" "Java"
 
-      - name: Archive Compiled Libraries
+      - name: Archive Compiled TDLib Libraries
         uses: actions/upload-artifact@v4
         with:
-          name: tdlib-android-binaries
-          path: tdlib_source/example/android/tdlib
+          name: tdlib-ARM64-binaries
+          path: tdlib_source/example/android/tdlib/tdlib.zip
           retention-days: 7
