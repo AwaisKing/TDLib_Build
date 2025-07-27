@@ -8,7 +8,7 @@ on:
 
 jobs:
   build_android:
-    name: Build Android ARM64
+    name: Build Android
     runs-on: ubuntu-latest # Or your preferred runner
 
     steps:
@@ -25,22 +25,24 @@ jobs:
           java-version: '17'
 
       - name: Install PHP (Required by TDLib build scripts)
-        run: sudo apt update && sudo apt install -yq php php-cli gperf g++ git perl make unzip wget
+        run: sudo apt update && sudo apt install -yq php php-cli gperf g++ git perl make unzip wget sed
 
       - name: Fetch Android SDK
         working-directory: tdlib_source/example/android
-        run: ./fetch-sdk.sh
-
-      - name: Build OpenSSL for Android
-        working-directory: tdlib_source/example/android
-        run: ./build-openssl.sh
-
-      - name: Build TDLib for Android
-        working-directory: tdlib_source/example/android
         run: |
+          ./fetch-sdk.sh
           ANDROID_SDK_HOME="${{ env.ANDROID_HOME }}"
           ANDROID_SDK_ROOT="${{ env.ANDROID_HOME }}"
           ANDROID_NDK_ROOT="${{ steps.setup-ndk.outputs.ndk-path }}"
+
+      - name: Build OpenSSL for Android (All Archs)
+        working-directory: tdlib_source/example/android
+        run: ./build-openssl.sh
+
+      - name: Build TDLib for Android (ARM64)
+        working-directory: tdlib_source/example/android
+        run: |
+          sed -i.bak 's/\(for ABI in \).* ;/\1arm64-v8a ;/g' build-tdlib.sh
           ./build-tdlib.sh
           # "$ANDROID_SDK_ROOT" "${{ steps.setup-ndk.outputs.ndk-full-version }}" "${PWD}/third_party/openssl" "" "Java"
 
